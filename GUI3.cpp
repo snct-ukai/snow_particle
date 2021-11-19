@@ -133,7 +133,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         srand(static_cast<unsigned int>(time(NULL)));
-        nparticle = 400;
+        nparticle = 5000;
         particle = new Particle[nparticle];
         POINT cursor;
         GetCursorPos(&cursor);
@@ -142,7 +142,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             particle[i].setCursorPos(cursor.x, cursor.y);
             particle[i].init();
         }
-        SetTimer(hWnd, 1, 30, NULL);
+        SetTimer(hWnd, 1, 15, NULL);
         break;
     case WM_TIMER:
         GetCursorPos(&cursor);

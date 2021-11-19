@@ -43,7 +43,7 @@ void Particle::draw(void) {
 	SelectObject(hdc, GetStockObject(DC_BRUSH));
 	SetDCPenColor(hdc, color);
 	SetDCBrushColor(hdc, color);
-	Ellipse(hdc, x - 10, y - 10, x + 10, y + 10);
+	Ellipse(hdc, x - radius, y - radius, x + radius, y + radius);
 }
 void Particle::setCursorPos(int mx, int my) {
 	this->mx = mx;
