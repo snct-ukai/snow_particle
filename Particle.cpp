@@ -12,7 +12,7 @@ void Particle::init(void) {
 	ax = 0;
 	ay = 0.98;
 	radius = 5;
-	life = rand() * 5 + 15;
+	life = rand() * 5 + 20;
 	color = RGB(255, 255, 255);
 	timer.reset();
 	lastupdate = 0;
@@ -29,6 +29,12 @@ void Particle::update(void) {
 		vy += ay * dt;
 		x += vx * dt;
 		y += vy * dt;
+		if (x < -5) {
+			x += 805;
+		}
+		if (x > 805) {
+			x -= 805;
+		}
 		//radius = (-10 / life) * t + 10;
 		//double RG = 255 * t / life;
 		//color = RGB(RG, RG, 0xFF);

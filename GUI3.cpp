@@ -129,7 +129,7 @@ size_t nparticle;
 Particle* particle;
 int count;
 int ax;
-std::random_device Rand;     // 非決定的な乱数生成器を生成
+std::random_device Rand;
 std::mt19937 mt(Rand());
 std::uniform_int_distribution<> rnd(0, 100);
 
