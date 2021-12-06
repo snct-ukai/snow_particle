@@ -2,6 +2,7 @@
 //
 #include <cstdlib>
 #include <ctime>
+#include <random>
 #include "framework.h"
 #include "GUI3.h"
 #include "Particle.h"
@@ -100,7 +101,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // グローバル変数にインスタンス ハンドルを格納する
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+      CW_USEDEFAULT, 0, 800, 600, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -126,6 +127,11 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 size_t nparticle;
 Particle* particle;
+int count;
+int ax;
+std::random_device Rand;     // 非決定的な乱数生成器を生成
+std::mt19937 mt(Rand());
+std::uniform_int_distribution<> rnd(0, 100);
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -133,7 +139,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         srand(static_cast<unsigned int>(time(NULL)));
-        nparticle = 5000;
+        ax = rnd(mt) / 10 - 5;
+        count = rnd(mt) + 10;
+        nparticle = 400;
         particle = new Particle[nparticle];
         POINT cursor;
         GetCursorPos(&cursor);
@@ -141,18 +149,27 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         for (size_t i = 0; i < nparticle; i++) {
             particle[i].setCursorPos(cursor.x, cursor.y);
             particle[i].init();
+            particle[i].setBlow(ax);
         }
         SetTimer(hWnd, 1, 15, NULL);
         break;
+
     case WM_TIMER:
         GetCursorPos(&cursor);
         ScreenToClient(hWnd, &cursor);
+        if (!count) {
+            ax = rnd(mt) / 10 - 5;
+            count = rnd(mt) + 10;
+        }
         for (size_t i = 0; i < nparticle; i++) {
             particle[i].setCursorPos(cursor.x, cursor.y);
             particle[i].update();
+            particle[i].setBlow(ax);
         }
         InvalidateRect(hWnd, NULL, TRUE);
+        --count;
         break;
+
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -170,10 +187,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
+            SelectObject(hdc, GetStockObject(DC_PEN));
+            SelectObject(hdc, GetStockObject(DC_BRUSH));
+            SetDCPenColor(hdc, RGB(21, 21, 21));
+            SetDCBrushColor(hdc, RGB(21, 21, 21));
+            Rectangle(hdc, 0, 0, 800, 600);
             // TODO: HDC を使用する描画コードをここに追加してください...
             for (size_t i = 0; i < nparticle; i++) {
                 particle[i].setHDC(hdc);
@@ -182,6 +205,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             EndPaint(hWnd, &ps);
         }
         break;
+
     case WM_CLOSE:
         KillTimer(hWnd, 1);
         for (size_t i = 0; i < nparticle; i++) {
@@ -190,11 +214,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         delete[] particle;
         DestroyWindow(hWnd);
         break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
+
     }
     return 0;
 }

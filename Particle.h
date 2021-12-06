@@ -20,6 +20,7 @@ private:
 	double life;
 	COLORREF color;
 	HDC hdc;
+	bool exist;
 public:
 	Particle(void);
 	~Particle(void);
@@ -29,6 +30,7 @@ public:
 	void draw(void);
 	void setCursorPos(int mx, int my);
 	void setHDC(HDC hdc);
+	void setBlow(int ax);
 	double rand(void);
 };
 
