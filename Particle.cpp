@@ -12,7 +12,7 @@ void Particle::init(void) {
 	ax = 0;
 	ay = 0.98;
 	radius = 5;
-	life = rand() * 5 + 20;
+	life = 25;
 	color = RGB(255, 255, 255);
 	timer.reset();
 	lastupdate = 0;
